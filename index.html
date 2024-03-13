@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature App</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="signatureCanvas" width="400" height="200"></canvas>
+    <br>
+    <button onclick="clearSignature()">Clear Signature</button>
+
+    <script>
+        window.onload = function () {
+            var canvas = document.getElementById('signatureCanvas');
+            var ctx = canvas.getContext('2d');
+            var isDrawing = false;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            function startDrawing(e) {
+                isDrawing = true;
+                draw(e);
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                var rect = canvas.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#000';
+
+                if (ctx.beginPath) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+                else if (ctx.ink) {
+                    ctx.ink(x, y);
+                }
+                else {
+                    console.error('Canvas is not supported by your browser.');
+                }
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+        };
+
+        function clearSignature() {
+            var canvas = document.getElementById('signatureCanvas');
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
